@@ -74,14 +74,16 @@ margin-top:10px;
 color:green;
 text-align:center;
 }
+.logo-container{
+    text-align:center;
+    margin-bottom:15px;
+}
+
 .logo-container img{
-    width:140px;
+    width:120px;
     height:auto;
     display:block;
-    margin:auto;
-    background:white;
-    padding:10px;
-    border-radius:12px;
+    margin:0 auto 10px auto;
 }
 </style>
 
@@ -89,13 +91,24 @@ text-align:center;
 <body>
 
 <div class="login-box">
-<div class="logo-container">
-    <img src="3. INTERFREIGHT COMPANY LOGO.png" alt="Interfreight Logo">
-</div>
 
-<div class="logo">
-<h2>INTERFREIGHT GROUP SYSTEM</h2>
-<p>User Login</p>
+    <div class="logo-container">
+        <img src="3. INTERFREIGHT COMPANY LOGO.png" alt="Interfreight Logo">
+    </div>
+
+    <div class="logo">
+        <h2>INTERFREIGHT GROUP SYSTEM</h2>
+        <p>User Login</p>
+    </div>
+
+    <input type="text" id="username" placeholder="Username">
+
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <div id="message"></div>
+
 </div>
 
 <input type="text" id="username" placeholder="Username">
