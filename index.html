@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Interfreight IT System</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0D3B66,#1E5FA8);
+}
+
+.login-box{
+background:white;
+width:380px;
+padding:35px;
+border-radius:15px;
+box-shadow:0 15px 40px rgba(0,0,0,.2);
+}
+
+.logo{
+text-align:center;
+margin-bottom:20px;
+}
+
+.logo h2{
+color:#0D3B66;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+background:#0D3B66;
+color:white;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#16528e;
+}
+
+.error{
+margin-top:10px;
+color:red;
+text-align:center;
+}
+
+.success{
+margin-top:10px;
+color:green;
+text-align:center;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="login-box">
+
+<div class="logo">
+<h2>INTERFREIGHT IT SYSTEM</h2>
+<p>User Login</p>
+</div>
+
+<input
+type="text"
+id="username"
+placeholder="Username">
+
+<input
+type="password"
+id="password"
+placeholder="Password">
+
+<button onclick="login()">
+Login
+</button>
+
+<div id="message"></div>
+
+</div>
+
+<script>
+
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbwrYXNIm4cLZHV92LTix5e1Pj-11rlPbqVK5ONGi2yXy0vScSAqgngq73uctEv81pMt/exec";
+
+async function login(){
+
+const username =
+document.getElementById("username").value;
+
+const password =
+document.getElementById("password").value;
+
+const response = await fetch(
+SCRIPT_URL,
+{
+method:"POST",
+body:JSON.stringify({
+action:"login",
+username:username,
+password:password
+})
+}
+);
+
+const result =
+await response.json();
+
+if(result.success){
+
+localStorage.setItem(
+"currentUser",
+JSON.stringify(result)
+);
+
+document.getElementById("message").innerHTML =
+"<div class='success'>Login Successful</div>";
+
+setTimeout(()=>{
+window.location.href="dashboard.html";
+},1000);
+
+}else{
+
+document.getElementById("message").innerHTML =
+"<div class='error'>Invalid Username or Password</div>";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
