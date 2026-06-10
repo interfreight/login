@@ -99,20 +99,19 @@ text-align:center;
 
 <script>
 
-
 const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbwrYXNIm4cLZHV92LTix5e1Pj-11rlPbqVK5ONGi2yXy0vScSAqgngq73uctEv81pMt/exec";
 
 async function login(){
 
     const username =
-        document.getElementById("username").value.trim();
+    document.getElementById("username").value.trim();
 
     const password =
-        document.getElementById("password").value.trim();
+    document.getElementById("password").value.trim();
 
     const message =
-        document.getElementById("message");
+    document.getElementById("message");
 
     if(!username || !password){
 
@@ -124,21 +123,12 @@ async function login(){
 
     try{
 
-        const response = await fetch(SCRIPT_URL,{
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-                action:"login",
-                username:username,
-                password:password
-            })
-
-        });
+        const response = await fetch(
+            SCRIPT_URL +
+            "?action=login" +
+            "&username=" + encodeURIComponent(username) +
+            "&password=" + encodeURIComponent(password)
+        );
 
         const result = await response.json();
 
@@ -158,7 +148,7 @@ async function login(){
                 result.fullName +
                 "</div>";
 
-                setTimeout(()=>{
+                setTimeout(() => {
 
                     window.location.href =
                     "https://interfreight.github.io/IT-Dashboard/";
@@ -171,12 +161,14 @@ async function login(){
 
                 message.innerHTML =
                 "<div class='error'>Access Denied. IT users only.</div>";
+
             }
 
         }else{
 
             message.innerHTML =
             "<div class='error'>Invalid Username or Password</div>";
+
         }
 
     }catch(error){
@@ -184,7 +176,8 @@ async function login(){
         console.error(error);
 
         message.innerHTML =
-        "<div class='error'>Unable to connect to server</div>";
+        "<div class='error'>Connection Error</div>";
+
     }
 
 }
