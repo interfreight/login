@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Interfreight Group System</title>
+<title>Interfreight IT System</title>
 
 <style>
 
@@ -47,10 +47,7 @@ margin-bottom:15px;
 border:1px solid #ccc;
 border-radius:8px;
 }
-.logo img{
-  width: 120px;
-  margin-bottom: 10px;
-}
+
 button{
 width:100%;
 padding:12px;
@@ -86,24 +83,15 @@ text-align:center;
 <div class="login-box">
 
 <div class="logo">
-  <img src="3. INTERFREIGHT COMPANY LOGO.png" alt="Interfreight Logo">
-  <h2>INTERFREIGHT IT SYSTEM</h2>
-  <p>User Login</p>
+<h2>INTERFREIGHT IT SYSTEM</h2>
+<p>User Login</p>
 </div>
 
-<input
-type="text"
-id="username"
-placeholder="Username">
+<input type="text" id="username" placeholder="Username">
 
-<input
-type="password"
-id="password"
-placeholder="Password">
+<input type="password" id="password" placeholder="Password">
 
-<button onclick="login()">
-Login
-</button>
+<button onclick="login()">Login</button>
 
 <div id="message"></div>
 
@@ -111,54 +99,103 @@ Login
 
 <script>
 
+
 const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbwrYXNIm4cLZHV92LTix5e1Pj-11rlPbqVK5ONGi2yXy0vScSAqgngq73uctEv81pMt/exec";
 
 async function login(){
 
-const username =
-document.getElementById("username").value;
+    const username =
+        document.getElementById("username").value.trim();
 
-const password =
-document.getElementById("password").value;
+    const password =
+        document.getElementById("password").value.trim();
 
-const response = await fetch(
-SCRIPT_URL,
-{
-method:"POST",
-body:JSON.stringify({
-action:"login",
-username:username,
-password:password
-})
+    const message =
+        document.getElementById("message");
+
+    if(!username || !password){
+
+        message.innerHTML =
+        "<div class='error'>Please enter Username and Password</div>";
+
+        return;
+    }
+
+    try{
+
+        const response = await fetch(SCRIPT_URL,{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                action:"login",
+                username:username,
+                password:password
+            })
+
+        });
+
+        const result = await response.json();
+
+        console.log(result);
+
+        if(result.success){
+
+            localStorage.setItem(
+                "currentUser",
+                JSON.stringify(result)
+            );
+
+            if(result.role === "IT"){
+
+                message.innerHTML =
+                "<div class='success'>Welcome " +
+                result.fullName +
+                "</div>";
+
+                setTimeout(()=>{
+
+                    window.location.href =
+                    "https://interfreight.github.io/IT-Dashboard/";
+
+                },1000);
+
+            }else{
+
+                localStorage.removeItem("currentUser");
+
+                message.innerHTML =
+                "<div class='error'>Access Denied. IT users only.</div>";
+            }
+
+        }else{
+
+            message.innerHTML =
+            "<div class='error'>Invalid Username or Password</div>";
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        message.innerHTML =
+        "<div class='error'>Unable to connect to server</div>";
+    }
+
 }
-);
 
-const result =
-await response.json();
+document.addEventListener("keypress", function(e){
 
-if(result.success){
+    if(e.key === "Enter"){
+        login();
+    }
 
-localStorage.setItem(
-"currentUser",
-JSON.stringify(result)
-);
-
-document.getElementById("message").innerHTML =
-"<div class='success'>Login Successful</div>";
-
-setTimeout(()=>{
-window.location.href="dashboard.html";
-},1000);
-
-}else{
-
-document.getElementById("message").innerHTML =
-"<div class='error'>Invalid Username or Password</div>";
-
-}
-
-}
+});
 
 </script>
 
