@@ -112,12 +112,21 @@ text-align:center;
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwrYXNIm4cLZHV92LTix5e1Pj-11rlPbqVK5ONGi2yXy0vScSAqgngq73uctEv81pMt/exec";
+const SUPABASE_URL =
+'https://tuihpvykuqbqnfyfepql.supabase.co';
 
+const SUPABASE_ANON_KEY =
+'PASTE_YOUR_ANON_KEY_HERE';
+
+const supabase =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 async function login(){
 
     const username =
@@ -139,57 +148,52 @@ async function login(){
 
     try{
 
-        const response = await fetch(
-            SCRIPT_URL +
-            "?action=login" +
-            "&username=" + encodeURIComponent(username) +
-            "&password=" + encodeURIComponent(password)
-        );
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('username', username)
+            .eq('password_hash', password)
+            .single();
 
-        const result = await response.json();
-
-        console.log(result);
-
-        if(result.success){
-
-            localStorage.setItem(
-                "currentUser",
-                JSON.stringify(result)
-            );
-
-            if(result.role === "IT"){
-
-                message.innerHTML =
-                "<div class='success'>Welcome " +
-                result.fullName +
-                "</div>";
-
-                setTimeout(() => {
-
-                    window.location.href =
-                    "https://interfreight.github.io/IT-Dashboard/";
-
-                },1000);
-
-            }else{
-
-                localStorage.removeItem("currentUser");
-
-                message.innerHTML =
-                "<div class='error'>Access Denied. IT users only.</div>";
-
-            }
-
-        }else{
+        if(error || !data){
 
             message.innerHTML =
             "<div class='error'>Invalid Username or Password</div>";
 
+            return;
         }
 
-    }catch(error){
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(data)
+        );
 
-        console.error(error);
+        if(data.role === "IT"){
+
+            message.innerHTML =
+            "<div class='success'>Welcome " +
+            data.full_name +
+            "</div>";
+
+            setTimeout(() => {
+
+                window.location.href =
+                "https://interfreight.github.io/IT-Dashboard/";
+
+            },1000);
+
+        }else{
+
+            localStorage.removeItem("currentUser");
+
+            message.innerHTML =
+            "<div class='error'>Access Denied. IT users only.</div>";
+
+        }
+
+    }catch(err){
+
+        console.error(err);
 
         message.innerHTML =
         "<div class='error'>Connection Error</div>";
