@@ -176,7 +176,7 @@ async function login(){
         const user = data[0];
 
         console.log("USER:", user);
-        console.log("ROLE:", user.role);
+        console.log("DEPARTMENT:", user.department);
 
         localStorage.setItem(
             "currentUser",
@@ -190,16 +190,16 @@ async function login(){
 
         setTimeout(() => {
 
-            const role =
-            (user.role || "").trim().toUpperCase();
+            const department =
+            (user.department || "").trim().toUpperCase();
 
-            if(role === "IT"){
+            if(department === "IT"){
 
                 window.location.href =
                 "https://interfreight.github.io/IT-Dashboard/";
 
             }
-            else if(role === "HR"){
+            else if(department === "HR"){
 
                 window.location.href =
                 "https://interfreight.github.io/Hr_Dashboard/";
@@ -208,8 +208,8 @@ async function login(){
             else{
 
                 message.innerHTML =
-                "<div class='error'>Access Denied. Role: " +
-                user.role +
+                "<div class='error'>Access Denied. department: " +
+                user.department +
                 "</div>";
 
                 localStorage.removeItem("currentUser");
