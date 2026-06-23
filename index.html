@@ -148,14 +148,15 @@ async function login(){
 
     try{
 
-        const { data, error } = await db
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .eq('password_hash', password)
-        .maybeSingle();
+       const { data, error } = await db
+    .from('users')
+    .select('*')
+    .eq('username', username)
+    .eq('password_hash', password);
 
-        if(error || !data){
+console.log("DATA:", data);
+console.log("ERROR:", error);
+     if(error || data.length === 0){
 
             message.innerHTML =
             "<div class='error'>Invalid Username or Password</div>";
@@ -167,9 +168,10 @@ async function login(){
             "currentUser",
             JSON.stringify(data)
         );
-
+const user = data[0];
+console.log("USER:", user);
         // IT LOGIN
-        if(data.role === "IT"){
+        if(user.role === "IT"){
 
             message.innerHTML =
             "<div class='success'>Welcome " +
@@ -187,7 +189,7 @@ async function login(){
         }
 
         // HR LOGIN
-        if(data.role === "HR"){
+        if(user.role === "HR"){
 
             message.innerHTML =
             "<div class='success'>Welcome " +
