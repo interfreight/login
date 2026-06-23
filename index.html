@@ -199,7 +199,37 @@ async function login(){
     "<div class='error'>" + err.message + "</div>";
 
 }
+  if(data.role === "HR"){
 
+            message.innerHTML =
+            "<div class='success'>Welcome " +
+            data.full_name +
+            "</div>";
+
+            setTimeout(() => {
+
+                window.location.href =
+                "https://interfreight.github.io/Hr_Dashboard/#";
+
+            },1000);
+
+        }else{
+
+            localStorage.removeItem("currentUser");
+
+            message.innerHTML =
+            "<div class='error'>Access Denied. HR users only.</div>";
+
+        }
+
+ }catch(err){
+
+    console.error(err);
+
+    message.innerHTML =
+    "<div class='error'>" + err.message + "</div>";
+
+}
 }
 
 document.addEventListener("keypress", function(e){
