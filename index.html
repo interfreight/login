@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Interfreight IT System</title>
+<title>Interfreight Login System</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -31,13 +30,24 @@ border-radius:15px;
 box-shadow:0 15px 40px rgba(0,0,0,.2);
 }
 
-.logo{
+.logo-container{
 text-align:center;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
-.logo h2{
+.logo-container img{
+width:120px;
+}
+
+h2{
+text-align:center;
 color:#0D3B66;
+}
+
+p{
+text-align:center;
+margin-bottom:20px;
+color:#555;
 }
 
 input{
@@ -74,17 +84,6 @@ margin-top:10px;
 color:green;
 text-align:center;
 }
-.logo-container{
-    text-align:center;
-    margin-bottom:15px;
-}
-
-.logo-container img{
-    width:120px;
-    height:auto;
-    display:block;
-    margin:0 auto 10px auto;
-}
 </style>
 
 </head>
@@ -92,149 +91,105 @@ text-align:center;
 
 <div class="login-box">
 
-    <div class="logo-container">
-        <img src="3. INTERFREIGHT COMPANY LOGO.png" alt="Interfreight Logo">
-    </div>
-
-    <div class="logo">
-        <h2>INTERFREIGHT GROUP SYSTEM</h2>
-        <p>User Login</p>
-    </div>
-
-    <input type="text" id="username" placeholder="Username">
-
-    <input type="password" id="password" placeholder="Password">
-
-    <button onclick="login()">Login</button>
-
-    <div id="message"></div>
-
+<div class="logo-container">
+<img src="3. INTERFREIGHT COMPANY LOGO.png" alt="Logo">
 </div>
 
+<h2>INTERFREIGHT SYSTEM</h2>
+<p>User Login</p>
+
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<div id="message"></div>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-
-const SUPABASE_URL =
-'https://tuihpvykuqbqnfyfepql.supabase.co';
-
-const SUPABASE_ANON_KEY =
-'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1aWhwdnlrdXFicW5meWZlcHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3Mjg4OTcsImV4cCI6MjA5NzMwNDg5N30.HZKS8CgFLjkZ-Bx2AIjFjurH3IsKjvf37Ft852CzJsQ';
-
-const db =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
+const db = window.supabase.createClient(
+"https://tuihpvykuqbqnfyfepql.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1aWhwdnlrdXFicW5meWZlcHFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3Mjg4OTcsImV4cCI6MjA5NzMwNDg5N30.HZKS8CgFLjkZ-Bx2AIjFjurH3IsKjvf37Ft852CzJsQ"
 );
+
 async function login(){
 
-    const username =
-    document.getElementById("username").value.trim();
+const username = document.getElementById("username").value.trim();
+const password = document.getElementById("password").value.trim();
+const message = document.getElementById("message");
 
-    const password =
-    document.getElementById("password").value.trim();
-
-    const message =
-    document.getElementById("message");
-
-    if(!username || !password){
-
-        message.innerHTML =
-        "<div class='error'>Please enter Username and Password</div>";
-
-        return;
-    }
-
-    try{
-
-        const { data, error } = await db
-        .from("users")
-        .select("*")
-        .eq("username", username)
-        .eq("password_hash", password);
-
-        console.log("DATA:", data);
-        console.log("ERROR:", error);
-
-        if(error){
-
-            message.innerHTML =
-            "<div class='error'>" + error.message + "</div>";
-
-            return;
-        }
-
-        if(!data || data.length === 0){
-
-            message.innerHTML =
-            "<div class='error'>Invalid Username or Password</div>";
-
-            return;
-        }
-
-        const user = data[0];
-
-        console.log("USER:", user);
-        console.log("DEPARTMENT:", user.department);
-
-        localStorage.setItem(
-            "currentUser",
-            JSON.stringify(user)
-        );
-
-        message.innerHTML =
-        "<div class='success'>Welcome " +
-        user.full_name +
-        "</div>";
-
-        setTimeout(() => {
-
-            const department =
-            (user.department || "").trim().toUpperCase();
-
-            if(department === "IT"){
-
-                window.location.href =
-                "https://interfreight.github.io/IT-Dashboard/";
-
-            }
-            else if(department === "HR"){
-
-                window.location.href =
-                "https://interfreight.github.io/Hr_Dashboard/";
-
-            }
-            else{
-
-                message.innerHTML =
-                "<div class='error'>Access Denied. department: " +
-                user.department +
-                "</div>";
-
-                localStorage.removeItem("currentUser");
-            }
-
-        },1000);
-
-    }
-    catch(err){
-
-        console.error(err);
-
-        message.innerHTML =
-        "<div class='error'>" + err.message + "</div>";
-    }
+if(!username || !password){
+message.innerHTML = "<div class='error'>Please enter username and password</div>";
+return;
 }
 
-document.addEventListener("keypress", function(e){
+try{
 
-    if(e.key === "Enter"){
-        login();
-    }
+const { data, error } = await db
+.from("users")
+.select("*")
+.eq("username", username)
+.eq("password_hash", password);
 
+if(error){
+message.innerHTML = "<div class='error'>" + error.message + "</div>";
+return;
+}
+
+if(!data || data.length === 0){
+message.innerHTML = "<div class='error'>Invalid credentials</div>";
+return;
+}
+
+const user = data[0];
+
+// save session
+localStorage.setItem("currentUser", JSON.stringify(user));
+
+message.innerHTML = "<div class='success'>Welcome " + user.full_name + "</div>";
+
+setTimeout(() => {
+
+const dept = (user.department || "").trim().toUpperCase();
+
+// ROUTING SYSTEM
+switch(dept){
+
+case "IT":
+window.location.href = "https://interfreight.github.io/IT-Dashboard/";
+break;
+
+case "HR":
+window.location.href = "https://interfreight.github.io/Hr_Dashboard/";
+break;
+
+case "USER":
+window.location.href = "https://interfreight.github.io/Employee_Portal/";
+break;
+
+default:
+message.innerHTML = "<div class='error'>Access denied: " + user.department + "</div>";
+localStorage.removeItem("currentUser");
+
+}
+
+}, 800);
+
+}
+catch(err){
+message.innerHTML = "<div class='error'>" + err.message + "</div>";
+}
+}
+
+// ENTER KEY SUPPORT
+document.addEventListener("keydown", function(e){
+if(e.key === "Enter"){
+login();
+}
 });
-
 </script>
 
 </body>
