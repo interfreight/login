@@ -148,12 +148,12 @@ async function login(){
 
     try{
 
-      const { data, error } = await db
-            .from('users')
-            .select('*')
-            .eq('username', username)
-            .eq('password_hash', password)
-            .single();
+        const { data, error } = await db
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .eq('password_hash', password)
+        .maybeSingle();
 
         if(error || !data){
 
@@ -168,6 +168,7 @@ async function login(){
             JSON.stringify(data)
         );
 
+        // IT LOGIN
         if(data.role === "IT"){
 
             message.innerHTML =
@@ -182,24 +183,11 @@ async function login(){
 
             },1000);
 
-        }else{
-
-            localStorage.removeItem("currentUser");
-
-            message.innerHTML =
-            "<div class='error'>Access Denied. IT users only.</div>";
-
+            return;
         }
 
- }catch(err){
-
-    console.error(err);
-
-    message.innerHTML =
-    "<div class='error'>" + err.message + "</div>";
-
-}
-  if(data.role === "HR"){
+        // HR LOGIN
+        if(data.role === "HR"){
 
             message.innerHTML =
             "<div class='success'>Welcome " +
@@ -209,27 +197,24 @@ async function login(){
             setTimeout(() => {
 
                 window.location.href =
-                "https://interfreight.github.io/Hr_Dashboard/#";
+                "https://interfreight.github.io/Hr_Dashboard/";
 
             },1000);
 
-        }else{
-
-            localStorage.removeItem("currentUser");
-
-            message.innerHTML =
-            "<div class='error'>Access Denied. HR users only.</div>";
-
+            return;
         }
 
- }catch(err){
+        message.innerHTML =
+        "<div class='error'>Access Denied.</div>";
 
-    console.error(err);
+    }catch(err){
 
-    message.innerHTML =
-    "<div class='error'>" + err.message + "</div>";
+        console.error(err);
 
-}
+        message.innerHTML =
+        "<div class='error'>" + err.message + "</div>";
+
+    }
 }
 
 document.addEventListener("keypress", function(e){
