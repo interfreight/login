@@ -148,15 +148,24 @@ async function login(){
 
     try{
 
-       const { data, error } = await db
-    .from('users')
-    .select('*')
-    .eq('username', username)
-    .eq('password_hash', password);
+        const { data, error } = await db
+        .from("users")
+        .select("*")
+        .eq("username", username)
+        .eq("password_hash", password);
 
-console.log("DATA:", data);
-console.log("ERROR:", error);
-     if(error || data.length === 0){
+        console.log("DATA:", data);
+        console.log("ERROR:", error);
+
+        if(error){
+
+            message.innerHTML =
+            "<div class='error'>" + error.message + "</div>";
+
+            return;
+        }
+
+        if(!data || data.length === 0){
 
             message.innerHTML =
             "<div class='error'>Invalid Username or Password</div>";
@@ -164,58 +173,57 @@ console.log("ERROR:", error);
             return;
         }
 
+        const user = data[0];
+
+        console.log("USER:", user);
+        console.log("ROLE:", user.role);
+
         localStorage.setItem(
             "currentUser",
-            JSON.stringify(data)
+            JSON.stringify(user)
         );
-const user = data[0];
-console.log("USER:", user);
-        // IT LOGIN
-        if(user.role === "IT"){
 
-            message.innerHTML =
-            "<div class='success'>Welcome " +
-            data.full_name +
-            "</div>";
+        message.innerHTML =
+        "<div class='success'>Welcome " +
+        user.full_name +
+        "</div>";
 
-            setTimeout(() => {
+        setTimeout(() => {
+
+            const role =
+            (user.role || "").trim().toUpperCase();
+
+            if(role === "IT"){
 
                 window.location.href =
                 "https://interfreight.github.io/IT-Dashboard/";
 
-            },1000);
-
-            return;
-        }
-
-        // HR LOGIN
-        if(user.role === "HR"){
-
-            message.innerHTML =
-            "<div class='success'>Welcome " +
-            data.full_name +
-            "</div>";
-
-            setTimeout(() => {
+            }
+            else if(role === "HR"){
 
                 window.location.href =
                 "https://interfreight.github.io/Hr_Dashboard/";
 
-            },1000);
+            }
+            else{
 
-            return;
-        }
+                message.innerHTML =
+                "<div class='error'>Access Denied. Role: " +
+                user.role +
+                "</div>";
 
-        message.innerHTML =
-        "<div class='error'>Access Denied.</div>";
+                localStorage.removeItem("currentUser");
+            }
 
-    }catch(err){
+        },1000);
+
+    }
+    catch(err){
 
         console.error(err);
 
         message.innerHTML =
         "<div class='error'>" + err.message + "</div>";
-
     }
 }
 
