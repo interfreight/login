@@ -146,9 +146,6 @@ return;
 
 const user = data[0];
 
-console.log(user);
-console.log("ROLE =", user.role);
-console.log("DEPARTMENT =", user.department);
 // save session
 localStorage.setItem("currentUser", JSON.stringify(user));
 
@@ -158,9 +155,6 @@ setTimeout(() => {
 
 const role = String(user.role);
 
-alert("Role from DB = [" + role + "]");
-console.log("Role =", role);
-// ROUTING SYSTEM
 if(role === "User"){
     window.location.href =
     "https://interfreight.github.io/employee_portal/";
