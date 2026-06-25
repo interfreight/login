@@ -153,26 +153,29 @@ message.innerHTML = "<div class='success'>Welcome " + user.full_name + "</div>";
 
 setTimeout(() => {
 
-const dept = (user.department || "").trim().toUpperCase();
+const role = (user.role || "").trim().toUpperCase();
 
 // ROUTING SYSTEM
-switch(dept){
+switch(role){
 
 case "IT":
-window.location.href = " https://interfreight.github.io/IT-Dashboard/";
+window.location.href =
+"https://interfreight.github.io/IT-Dashboard/";
 break;
 
 case "HR":
-window.location.href = "https://interfreight.github.io/Hr_Dashboard/";
+window.location.href =
+"https://interfreight.github.io/Hr_Dashboard/";
 break;
 
 case "USER":
-window.location.href = "https://interfreight.github.io/Employee_Portal/";
+window.location.href =
+"https://interfreight.github.io/Employee_Portal/";
 break;
 
 default:
-message.innerHTML = "<div class='error'>Access denied: " + user.department + "</div>";
-localStorage.removeItem("currentUser");
+message.innerHTML =
+"<div class='error'>No dashboard assigned</div>";
 
 }
 
