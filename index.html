@@ -145,7 +145,8 @@ return;
 }
 
 const user = data[0];
-
+console.log("ROLE =", user.role);
+console.log("DEPARTMENT =", user.department);
 // save session
 localStorage.setItem("currentUser", JSON.stringify(user));
 
