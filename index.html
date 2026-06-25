@@ -179,35 +179,6 @@ message.innerHTML =
 
 }
 
-}, 800);const dept = (user.department || "").trim().toUpperCase();
-
-localStorage.setItem("currentUser", JSON.stringify(user));
-
-setTimeout(() => {
-
-switch(dept){
-
-case "IT":
-window.location.href = "https://interfreight.github.io/IT-Dashboard/";
-break;
-
-case "HR":
-window.location.href = "https://interfreight.github.io/Hr_Dashboard/";
-break;
-
-case "ACCOUNTING":
-window.location.href = "https://interfreight.github.io/Accounting/";
-break;
-
-case "SALES":
-window.location.href = "https://interfreight.github.io/Sales/";
-break;
-
-default:
-message.innerHTML = "<div class='error'>No dashboard assigned: " + user.department + "</div>";
-localStorage.removeItem("currentUser");
-}
-
 }, 800);
 
 }
