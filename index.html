@@ -150,25 +150,44 @@ const user = data[0];
 localStorage.setItem("currentUser", JSON.stringify(user));
 
 message.innerHTML = "<div class='success'>Welcome " + user.full_name + "</div>";
-
 setTimeout(() => {
 
-const role = String(user.role);
+const role = String(user.role).trim();
 
 if(role === "User"){
+
     window.location.href =
     "https://interfreight.github.io/employee_portal/";
+
 }
 else if(role === "IT"){
+
     window.location.href =
     "https://interfreight.github.io/IT-Dashboard/";
+
 }
 else if(role === "HR"){
+
     window.location.href =
-    "https://interfreight.github.io/Hr_Dashboard/";
+    "https://interfreight.github.io/managersportal/";
+
+}
+else if(
+    role === "Transport Manager" ||
+    role === "Operations Manager" ||
+    role === "Sales Manager" ||
+    role === "Accounting Manager" ||
+    role === "Forwarding Manager"
+){
+
+    window.location.href =
+    "https://interfreight.github.io/managersportal/";
+
 }
 else{
-    alert("Role not matched: [" + role + "]");
+
+    alert("Role not matched: " + role);
+
 }
 
 }, 800);
