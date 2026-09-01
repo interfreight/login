@@ -487,245 +487,304 @@ err.message +
 }
 
 
+
 /* ========================= */
 /* REGISTER ACCOUNT */
 /* ========================= */
 
 async function registerAccount(){
 
-const fullName =
-document.getElementById("regFullName").value.trim();
+    const fullName =
+        document.getElementById("regFullName").value.trim();
 
-const username =
-document.getElementById("regUsername").value.trim();
+    const username =
+        document.getElementById("regUsername").value.trim();
 
-const email =
-document.getElementById("regEmail").value.trim();
+    const email =
+        document.getElementById("regEmail").value.trim();
 
-const department =
-document.getElementById("regDepartment").value.trim();
+    const department =
+        document.getElementById("regDepartment").value.trim();
 
-const password =
-document.getElementById("regPassword").value;
+    const password =
+        document.getElementById("regPassword").value;
 
-const confirmPassword =
-document.getElementById("regConfirmPassword").value;
+    const confirmPassword =
+        document.getElementById("regConfirmPassword").value;
 
-const message =
-document.getElementById("registerMessage");
+    const message =
+        document.getElementById("registerMessage");
 
 
-/* ========================= */
-/* VALIDATION */
-/* ========================= */
+    /* =========================
+       VALIDATION
+    ========================= */
 
-if(
-!fullName ||
-!username ||
-!email ||
-!department ||
-!password ||
-!confirmPassword
-){
+    if(
+        !fullName ||
+        !username ||
+        !email ||
+        !department ||
+        !password ||
+        !confirmPassword
+    ){
 
-message.innerHTML =
-"<div class='error'>" +
-"Please complete all fields." +
-"</div>";
+        message.innerHTML =
+        "<div class='error'>" +
+        "Please complete all fields." +
+        "</div>";
 
-return;
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        message.innerHTML =
+        "<div class='error'>" +
+        "Password must be at least 6 characters." +
+        "</div>";
+
+        return;
+    }
+
+
+    if(password !== confirmPassword){
+
+        message.innerHTML =
+        "<div class='error'>" +
+        "Passwords do not match." +
+        "</div>";
+
+        return;
+    }
+
+
+    try{
+
+        /* =========================
+           CHECK USERNAME
+        ========================= */
+
+        const {
+            data: existingUsername,
+            error: usernameError
+        } = await db
+
+        .from("users")
+
+        .select("id")
+
+        .eq("username", username);
+
+
+        if(usernameError){
+
+            message.innerHTML =
+            "<div class='error'>" +
+            usernameError.message +
+            "</div>";
+
+            return;
+        }
+
+
+        if(existingUsername &&
+           existingUsername.length > 0){
+
+            message.innerHTML =
+            "<div class='error'>" +
+            "Username already exists." +
+            "</div>";
+
+            return;
+        }
+
+
+        /* =========================
+           CHECK EMAIL
+        ========================= */
+
+        const {
+            data: existingEmail,
+            error: emailError
+        } = await db
+
+        .from("users")
+
+        .select("id")
+
+        .eq("email", email);
+
+
+        if(emailError){
+
+            message.innerHTML =
+            "<div class='error'>" +
+            emailError.message +
+            "</div>";
+
+            return;
+        }
+
+
+        if(existingEmail &&
+           existingEmail.length > 0){
+
+            message.innerHTML =
+            "<div class='error'>" +
+            "Email address is already registered." +
+            "</div>";
+
+            return;
+        }
+
+
+        /* =========================
+           CREATE USER ACCOUNT
+        ========================= */
+
+        message.innerHTML =
+        "<div class='info'>" +
+        "Creating your account..." +
+        "</div>";
+
+
+        const {
+            data: newUser,
+            error: insertError
+        } = await db
+
+        .from("users")
+
+        .insert([{
+
+            username: username,
+
+            password_hash: password,
+
+            full_name: fullName,
+
+            email: email,
+
+            role: "User",
+
+            department: department,
+
+            status: "active"
+
+        }])
+
+        .select("id,username,full_name,email,department")
+
+        .single();
+
+
+        if(insertError){
+
+            message.innerHTML =
+            "<div class='error'>" +
+            insertError.message +
+            "</div>";
+
+            return;
+        }
+
+
+        /* =========================
+           CREATE EMPLOYEE PROFILE
+        ========================= */
+
+        const {
+            error: profileError
+        } = await db
+
+        .from("employee_profiles")
+
+        .insert([{
+
+            user_id: newUser.id,
+
+            department: department,
+
+            profile_completed: false
+
+        }]);
+
+
+        /*
+         * If employee_profiles cannot be
+         * created yet, don't stop registration.
+         *
+         * Your employee form can create the
+         * profile when it is saved.
+         */
+
+        if(profileError){
+
+            console.warn(
+                "Employee profile not created yet:",
+                profileError.message
+            );
+
+        }
+
+
+        /* =========================
+           SAVE CURRENT USER
+        ========================= */
+
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(newUser)
+        );
+
+
+        /* =========================
+           SUCCESS MESSAGE
+        ========================= */
+
+        message.innerHTML =
+        "<div class='success'>" +
+
+        "Account created successfully!<br>" +
+
+        "Opening your employee profile..." +
+
+        "</div>";
+
+
+        /* =========================
+           REDIRECT TO EMPLOYEE FORM
+        ========================= */
+
+        setTimeout(function(){
+
+            window.location.href =
+            "https://interfreight.github.io/employee_form/?id=" +
+            encodeURIComponent(newUser.id);
+
+        },1000);
+
+
+    }
+
+    catch(err){
+
+        console.error(
+            "Registration Error:",
+            err
+        );
+
+        message.innerHTML =
+        "<div class='error'>" +
+        err.message +
+        "</div>";
+
+    }
 
 }
-
-
-if(password.length < 6){
-
-message.innerHTML =
-"<div class='error'>" +
-"Password must be at least 6 characters." +
-"</div>";
-
-return;
-
-}
-
-
-if(password !== confirmPassword){
-
-message.innerHTML =
-"<div class='error'>" +
-"Passwords do not match." +
-"</div>";
-
-return;
-
-}
-
-
-/* ========================= */
-/* CHECK USERNAME */
-/* ========================= */
-
-try{
-
-const { data: existingUsername, error: usernameError } =
-
-await db
-
-.from("users")
-
-.select("id")
-
-.eq("username", username);
-
-
-if(usernameError){
-
-message.innerHTML =
-"<div class='error'>" +
-usernameError.message +
-"</div>";
-
-return;
-
-}
-
-
-if(existingUsername && existingUsername.length > 0){
-
-message.innerHTML =
-"<div class='error'>" +
-"Username already exists." +
-"</div>";
-
-return;
-
-}
-
-
-/* ========================= */
-/* CHECK EMAIL */
-/* ========================= */
-
-const { data: existingEmail, error: emailError } =
-
-await db
-
-.from("users")
-
-.select("id")
-
-.eq("email", email);
-
-
-if(emailError){
-
-message.innerHTML =
-"<div class='error'>" +
-emailError.message +
-"</div>";
-
-return;
-
-}
-
-
-if(existingEmail && existingEmail.length > 0){
-
-message.innerHTML =
-"<div class='error'>" +
-"Email address is already registered." +
-"</div>";
-
-return;
-
-}
-
-
-/* ========================= */
-/* CREATE ACCOUNT */
-/* ========================= */
-
-const { data, error } =
-
-await db
-
-.from("users")
-
-.insert([{
-
-username: username,
-
-password_hash: password,
-
-full_name: fullName,
-
-email: email,
-
-role: "User",
-
-department: department,
-
-status: "inactive"
-
-}])
-
-.select();
-
-
-if(error){
-
-message.innerHTML =
-"<div class='error'>" +
-error.message +
-"</div>";
-
-return;
-
-}
-
-
-/* ========================= */
-/* SUCCESS */
-/* ========================= */
-
-message.innerHTML =
-"<div class='success'>" +
-
-"Registration successful!<br>" +
-
-"Your account is pending activation by IT/HR." +
-
-"</div>";
-
-
-/* CLEAR FORM */
-
-document.getElementById("regFullName").value = "";
-
-document.getElementById("regUsername").value = "";
-
-document.getElementById("regEmail").value = "";
-
-document.getElementById("regDepartment").value = "";
-
-document.getElementById("regPassword").value = "";
-
-document.getElementById("regConfirmPassword").value = "";
-
-
-}
-
-catch(err){
-
-message.innerHTML =
-"<div class='error'>" +
-err.message +
-"</div>";
-
-}
-
-}
+```
 
 
 /* ========================= */
