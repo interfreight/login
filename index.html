@@ -222,11 +222,33 @@
     placeholder="Email Address"
     >
     
-    <input
-    type="text"
-    id="regDepartment"
-    placeholder="Department"
-    >
+  <select id="regDepartment">
+    <option value="" disabled selected>Select Department</option>
+    <option value="Accounting">Accounting</option>
+    <option value="Sales">Sales</option>
+    <option value="Operations">Operations</option>
+    <option value="Transport">Transport</option>
+    <option value="Forwarding">Forwarding</option>
+    <option value="HR">HR</option>
+    <option value="Admin">Admin</option>
+    <option value="IT">IT</option>
+</select>
+
+<select id="regRole">
+    <option value="" disabled selected>Select Role</option>
+    <option value="Administrator">Administrator</option>
+    <option value="IT">IT</option>
+    <option value="HR">HR</option>
+    <option value="ADMIN">ADMIN</option>
+    <option value="PRESIDENT">PRESIDENT</option>
+    <option value="BOD">BOD</option>
+    <option value="TRANSPORT MANAGER">TRANSPORT MANAGER</option>
+    <option value="OPERATIONS MANAGER">OPERATIONS MANAGER</option>
+    <option value="SALES MANAGER">SALES MANAGER</option>
+    <option value="ACCOUNTING MANAGER">ACCOUNTING MANAGER</option>
+    <option value="FORWARDING MANAGER">FORWARDING MANAGER</option>
+    <option value="User">User</option>
+</select>
     
     <input
     type="password"
@@ -492,8 +514,11 @@ async function registerAccount(){
     const email =
         document.getElementById("regEmail").value.trim();
 
-    const department =
-        document.getElementById("regDepartment").value.trim();
+   const department =
+    document.getElementById("regDepartment").value;
+
+const role =
+    document.getElementById("regRole").value;
 
     const password =
         document.getElementById("regPassword").value;
@@ -507,14 +532,16 @@ async function registerAccount(){
 
     /* VALIDATION */
 
-    if(
-        !fullName ||
-        !username ||
-        !email ||
-        !department ||
-        !password ||
-        !confirmPassword
-    ){
+ if(
+    !fullName ||
+    !username ||
+    !email ||
+    !department ||
+    !role ||
+    !password ||
+    !confirmPassword
+)
+    {
 
         message.innerHTML =
             "<div class='error'>" +
@@ -652,7 +679,7 @@ async function registerAccount(){
 
                 email: email,
 
-                role: "User",
+            role: role,
 
                 department: department,
 
@@ -731,9 +758,11 @@ async function registerAccount(){
 
         setTimeout(function(){
 
-            window.location.href =
-                "https://interfreight.github.io/employee_form/?id=" +
-                encodeURIComponent(newUser.id);
+         
+window.location.href =
+    "https://interfreight.github.io/employee_form/?id=" +
+    encodeURIComponent(newUser.id) +
+    "&registration=true";
 
         },1000);
 
